@@ -1,6 +1,6 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
-using Practice5_Web.Models;
+using Practice5_Model.Models;
 
 namespace Practice5_Web.Controllers
 {
