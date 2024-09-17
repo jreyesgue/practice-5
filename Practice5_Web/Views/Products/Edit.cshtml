@@ -1,0 +1,44 @@
+﻿@model Practice5_Model.Models.Product
+
+@{
+	ViewData["Title"] = "Edit Product";
+}
+
+<h1>Edit Product</h1>
+<hr />
+<div class="row">
+	<div class="col-md-4">
+		<form asp-action="Edit">
+			<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+			<input type="hidden" asp-for="ProductId" />
+			<div class="form-group">
+				<label asp-for="Name" class="control-label mb-2"></label>
+				<input asp-for="Name" class="form-control" />
+				<span asp-validation-for="Name" class="text-danger"></span>
+			</div>
+			<div class="form-group mt-3">
+				<label asp-for="Price" class="control-label mb-2"></label>
+				<input asp-for="Price" class="form-control" />
+				<span asp-validation-for="Price" class="text-danger"></span>
+			</div>
+			<div class="form-group mt-3">
+				<label asp-for="Category" class="control-label mb-2"></label>
+				<input asp-for="Category" class="form-control" />
+				<span asp-validation-for="Category" class="text-danger"></span>
+			</div>
+			<div class="form-group mt-3">
+				<label asp-for="DateAdded" class="control-label mb-2">Date Added</label>
+				<input asp-for="DateAdded" class="form-control" />
+				<span asp-validation-for="DateAdded" class="text-danger"></span>
+			</div>
+			<div class="form-group mt-4">
+				<input type="submit" value="Save" class="btn btn-primary" />
+				<a asp-action="Index" class="btn btn-light mx-2">Cancel</a>
+			</div>
+		</form>
+	</div>
+</div>
+
+@section Scripts {
+	@{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

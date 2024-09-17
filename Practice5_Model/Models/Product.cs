@@ -13,7 +13,5 @@ namespace Practice5_Model.Models
         [MaxLength(50)]
         public required string Category { get; set; }
         public DateTime DateAdded { get; set; }
-
-        public Inventory Inventory { get; set; }
     }
 }
