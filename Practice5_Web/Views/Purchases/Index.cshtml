@@ -1,0 +1,55 @@
+﻿@model IEnumerable<Practice5_Model.Models.Purchase>
+
+@{
+	ViewData["Title"] = "Purchases";
+}
+
+<div class="row">
+	<div class="col-10">
+		<h1>Purchases</h1>
+	</div>
+	<div class="col-2 text-end">
+		<a asp-action="Create" class="btn btn-primary">Create New</a>
+	</div>
+</div>
+<table class="table mt-4">
+	<thead>
+		<tr>
+			<th>
+				@Html.DisplayNameFor(model => model.Product)
+			</th>
+			<th>
+				@Html.DisplayNameFor(model => model.Quantity)
+			</th>
+			<th>
+				Purchase Price
+			</th>
+			<th>
+				Purchase Date
+			</th>
+			<th></th>
+		</tr>
+	</thead>
+	<tbody>
+@foreach (var item in Model) {
+		<tr>
+			<td>
+				@Html.DisplayFor(modelItem => item.Product.Name)
+			</td>
+			<td>
+				@Html.DisplayFor(modelItem => item.Quantity)
+			</td>
+			<td>
+				@Html.DisplayFor(modelItem => item.PurchasePrice)
+			</td>
+			<td>
+				@Html.DisplayFor(modelItem => item.PurchaseDate)
+			</td>
+			<td>
+				<a asp-action="Edit" asp-route-id="@item.PurchaseID" class="btn btn-info mx-2">Edit</a>
+				<a asp-action="Delete" asp-route-id="@item.PurchaseID" class="btn btn-danger">Delete</a>
+			</td>
+		</tr>
+}
+	</tbody>
+</table>
