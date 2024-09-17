@@ -12,6 +12,6 @@ namespace Practice5_Model.Models
         public decimal SalePrice { get; set; }
         public DateTime SaleDate { get; set; }
 
-        public Product Product { get; set; }
+        public Product? Product { get; set; }
     }
 }
