@@ -1,0 +1,37 @@
+﻿@model Practice5_Model.Models.Inventory
+
+@{
+	ViewData["Title"] = "Create Inventory";
+}
+
+<h1>Create Inventory</h1>
+<hr />
+<div class="row">
+	<div class="col-md-4">
+		<form asp-action="Create">
+			<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+			<div class="form-group">
+				<label asp-for="ProductID" class="control-label mb-2">Product</label>
+				<select asp-for="ProductID" class ="form-control" asp-items="ViewBag.ProductID"></select>
+			</div>
+			<div class="form-group mt-3">
+				<label asp-for="Stock" class="control-label mb-2"></label>
+				<input asp-for="Stock" class="form-control" />
+				<span asp-validation-for="Stock" class="text-danger"></span>
+			</div>
+			<div class="form-group mt-3">
+				<label asp-for="DateModified" class="control-label mb-2">Date Modified</label>
+				<input asp-for="DateModified" class="form-control" />
+				<span asp-validation-for="DateModified" class="text-danger"></span>
+			</div>
+			<div class="form-group mt-4">
+				<input type="submit" value="Create" class="btn btn-primary" />
+				<a asp-action="Index" class="btn btn-light mx-2">Cancel</a>
+			</div>
+		</form>
+	</div>
+</div>
+
+@section Scripts {
+	@{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

@@ -10,6 +10,6 @@ namespace Practice5_Model.Models
         public int Stock { get; set; }
         public DateTime DateModified { get; set; }
 
-        public Product Product { get; set; }
+        public Product? Product { get; set; }
     }
 }
