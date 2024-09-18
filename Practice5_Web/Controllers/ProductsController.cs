@@ -1,23 +1,21 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Practice5_DataAccess.Data;
 using Practice5_Model.Models;
 
 namespace Practice5_Web.Controllers
 {
     public class ProductsController : Controller
     {
-        private readonly DatabaseContext _context;
+        private readonly ServiceFactory _service;
 
-        public ProductsController(DatabaseContext context)
+        public ProductsController(ServiceFactory service)
         {
-            _context = context;
+            _service = service;
         }
 
         // GET: Products
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Product.ToListAsync());
+            return View(await _service.CreateService(HttpContext).GetProducts());
         }
 
         // GET: Products/Details/5
@@ -28,8 +26,7 @@ namespace Practice5_Web.Controllers
                 return NotFound();
             }
 
-            var product = await _context.Product
-                .FirstOrDefaultAsync(m => m.ProductId == id);
+            var product = await _service.CreateService(HttpContext).GetProductById(id);
             if (product == null)
             {
                 return NotFound();
@@ -51,8 +48,7 @@ namespace Practice5_Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(product);
-                await _context.SaveChangesAsync();
+                await _service.CreateService(HttpContext).AddProduct(product);
                 return RedirectToAction(nameof(Index));
             }
             return View(product);
@@ -61,17 +57,7 @@ namespace Practice5_Web.Controllers
         // GET: Products/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var product = await _context.Product.FindAsync(id);
-            if (product == null)
-            {
-                return NotFound();
-            }
-            return View(product);
+            return await Details(id);
         }
 
         // POST: Products/Edit/5
@@ -86,22 +72,7 @@ namespace Practice5_Web.Controllers
 
             if (ModelState.IsValid)
             {
-                try
-                {
-                    _context.Update(product);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!ProductExists(product.ProductId))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
+                await _service.CreateService(HttpContext).UpdateProduct(product);
                 return RedirectToAction(nameof(Index));
             }
             return View(product);
@@ -110,19 +81,7 @@ namespace Practice5_Web.Controllers
         // GET: Products/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var product = await _context.Product
-                .FirstOrDefaultAsync(m => m.ProductId == id);
-            if (product == null)
-            {
-                return NotFound();
-            }
-
-            return View(product);
+            return await Details(id);
         }
 
         // POST: Products/Delete/5
@@ -130,19 +89,8 @@ namespace Practice5_Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var product = await _context.Product.FindAsync(id);
-            if (product != null)
-            {
-                _context.Product.Remove(product);
-            }
-
-            await _context.SaveChangesAsync();
+            await _service.CreateService(HttpContext).DeleteProduct(id);
             return RedirectToAction(nameof(Index));
-        }
-
-        private bool ProductExists(int id)
-        {
-            return _context.Product.Any(e => e.ProductId == id);
         }
     }
 }

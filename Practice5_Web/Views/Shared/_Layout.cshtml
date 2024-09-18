@@ -33,7 +33,7 @@
 						</li>
 					</ul>
 					<div class="navbar-text justify-content-end">
-						<select id="dataAccessPreference" onchange="setQueryType(this.value)">
+						<select id="dataAccessSelector" onchange="updateDataAccess(this.value)" class="form-select">
 							<option value="EF">Entity Framework</option>
 							<option value="ADO">ADO.NET</option>
 						</select>
@@ -51,9 +51,6 @@
 	<script src="~/lib/jquery/dist/jquery.min.js"></script>
 	<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 	<script src="~/js/site.js" asp-append-version="true"></script>
-	<script>
-		var setQueryType = (value) => sessionStorage.setItem('DataAccess', value)
-	</script>
 	@await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

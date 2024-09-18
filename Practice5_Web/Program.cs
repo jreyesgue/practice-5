@@ -1,5 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Practice5_DataAccess.Data;
+using Practice5_DataAccess.Service.ADO;
+using Practice5_DataAccess.Service.EF;
+using Practice5_Web;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,6 +11,13 @@ builder.Services.AddControllersWithViews();
 
 builder.Services.AddDbContext<DatabaseContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.AddScoped<ProductServiceEF>();
+builder.Services.AddScoped<ProductServiceADO>(provider =>
+    new ProductServiceADO(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.AddScoped<ServiceFactory>();
+builder.Services.AddSession();
 
 var app = builder.Build();
 
@@ -25,6 +35,7 @@ app.UseStaticFiles();
 app.UseRouting();
 
 app.UseAuthorization();
+app.UseSession();
 
 app.MapControllerRoute(
     name: "default",

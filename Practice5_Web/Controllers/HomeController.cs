@@ -28,5 +28,21 @@ namespace Practice5_Web.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
+
+        [HttpPost]
+        public IActionResult DataAccess([FromBody] string dataAccess)
+        {
+            HttpContext.Session.SetString("DataAccess", dataAccess);
+
+            return Json(new { success = true });
+        }
+
+        [HttpGet]
+        public IActionResult DataAccess()
+        {
+            var dataAccess = HttpContext.Session.GetString("DataAccess") ?? "EF";
+
+            return Json(new { dataAccess });
+        }
     }
 }
