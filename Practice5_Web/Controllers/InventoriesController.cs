@@ -1,7 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using Practice5_DataAccess.Data;
 using Practice5_Model.Models;
 
 namespace Practice5_Web.Controllers
@@ -87,6 +85,7 @@ namespace Practice5_Web.Controllers
                     .UpdateInventory(inventory);
                 return RedirectToAction(nameof(Index));
             }
+            CreateProductSelect(inventory.ProductID);
             return View(inventory);
         }
 

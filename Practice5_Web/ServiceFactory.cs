@@ -37,6 +37,21 @@ namespace Practice5_Web
                     ?? throw new InvalidOperationException("Inventory Service is not registered");
             }
         }
+
+        public IPurchaseService CreatePurchaseService(HttpContext httpContext)
+        {
+            var preference = httpContext.Session.GetString("DataAccess");
+            if (preference == "ADO")
+            {
+                return _serviceProvider.GetService<PurchaseServiceADO>()
+                    ?? throw new InvalidOperationException("Purchase Service is not registered");
+            }
+            else
+            {
+                return _serviceProvider.GetService<PurchaseServiceEF>()
+                    ?? throw new InvalidOperationException("Purchase Service is not registered");
+            }
+        }
     }
 
 }

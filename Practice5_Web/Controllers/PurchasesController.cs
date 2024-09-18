@@ -1,25 +1,24 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using Practice5_DataAccess.Data;
 using Practice5_Model.Models;
 
 namespace Practice5_Web.Controllers
 {
     public class PurchasesController : Controller
     {
-        private readonly DatabaseContext _context;
+        private readonly ServiceFactory _service;
 
-        public PurchasesController(DatabaseContext context)
+        public PurchasesController(ServiceFactory service)
         {
-            _context = context;
+            _service = service;
         }
 
         // GET: Purchases
         public async Task<IActionResult> Index()
         {
-            var databaseContext = _context.Purchase.Include(p => p.Product);
-            return View(await databaseContext.ToListAsync());
+            return View(await _service
+                .CreatePurchaseService(HttpContext)
+                .GetPurchases());
         }
 
         // GET: Purchases/Details/5
@@ -30,21 +29,22 @@ namespace Practice5_Web.Controllers
                 return NotFound();
             }
 
-            var purchase = await _context.Purchase
-                .Include(p => p.Product)
-                .FirstOrDefaultAsync(m => m.PurchaseID == id);
+            var purchase = await _service
+                .CreatePurchaseService(HttpContext)
+                .GetPurchaseById(id);
             if (purchase == null)
             {
                 return NotFound();
             }
 
+            CreateProductSelect(purchase.ProductID);
             return View(purchase);
         }
 
         // GET: Purchases/Create
         public IActionResult Create()
         {
-            ViewData["ProductID"] = new SelectList(_context.Product, "ProductId", "Name");
+            CreateProductSelect();
             return View();
         }
 
@@ -55,29 +55,18 @@ namespace Practice5_Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(purchase);
-                await _context.SaveChangesAsync();
+                await _service.CreatePurchaseService(HttpContext)
+                    .AddPurchase(purchase);
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ProductID"] = new SelectList(_context.Product, "ProductId", "Name", purchase.ProductID);
+            CreateProductSelect(purchase.ProductID);
             return View(purchase);
         }
 
         // GET: Purchases/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var purchase = await _context.Purchase.FindAsync(id);
-            if (purchase == null)
-            {
-                return NotFound();
-            }
-            ViewData["ProductID"] = new SelectList(_context.Product, "ProductId", "Name", purchase.ProductID);
-            return View(purchase);
+            return await Details(id);
         }
 
         // POST: Purchases/Edit/5
@@ -92,45 +81,18 @@ namespace Practice5_Web.Controllers
 
             if (ModelState.IsValid)
             {
-                try
-                {
-                    _context.Update(purchase);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!PurchaseExists(purchase.PurchaseID))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
+                await _service.CreatePurchaseService(HttpContext)
+                    .UpdatePurchase(purchase);
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ProductID"] = new SelectList(_context.Product, "ProductId", "Name", purchase.ProductID);
+            CreateProductSelect(purchase.ProductID);
             return View(purchase);
         }
 
         // GET: Purchases/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var purchase = await _context.Purchase
-                .Include(p => p.Product)
-                .FirstOrDefaultAsync(m => m.PurchaseID == id);
-            if (purchase == null)
-            {
-                return NotFound();
-            }
-
-            return View(purchase);
+            return await Details(id);
         }
 
         // POST: Purchases/Delete/5
@@ -138,19 +100,21 @@ namespace Practice5_Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var purchase = await _context.Purchase.FindAsync(id);
-            if (purchase != null)
-            {
-                _context.Purchase.Remove(purchase);
-            }
-
-            await _context.SaveChangesAsync();
+            await _service.CreatePurchaseService(HttpContext)
+                .DeletePurchase(id);
             return RedirectToAction(nameof(Index));
         }
 
-        private bool PurchaseExists(int id)
+        private void CreateProductSelect()
         {
-            return _context.Purchase.Any(e => e.PurchaseID == id);
+            var products = _service.CreateProductService(HttpContext).GetProducts().Result;
+            ViewData["ProductID"] = new SelectList(products, "ProductId", "Name");
+        }
+
+        private void CreateProductSelect(int selected)
+        {
+            var products = _service.CreateProductService(HttpContext).GetProducts().Result;
+            ViewData["ProductID"] = new SelectList(products, "ProductId", "Name", selected);
         }
     }
 }
