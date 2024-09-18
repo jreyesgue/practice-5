@@ -24,6 +24,10 @@ builder.Services.AddScoped<PurchaseServiceEF>();
 builder.Services.AddScoped<PurchaseServiceADO>(provider =>
     new PurchaseServiceADO(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+builder.Services.AddScoped<SaleServiceEF>();
+builder.Services.AddScoped<SaleServiceADO>(provider =>
+    new SaleServiceADO(builder.Configuration.GetConnectionString("DefaultConnection")));
+
 builder.Services.AddScoped<ServiceFactory>();
 builder.Services.AddSession();
 

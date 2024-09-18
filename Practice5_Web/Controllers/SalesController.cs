@@ -1,25 +1,25 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using Practice5_DataAccess.Data;
 using Practice5_Model.Models;
 
 namespace Practice5_Web.Controllers
 {
     public class SalesController : Controller
     {
-        private readonly DatabaseContext _context;
+        private readonly ServiceFactory _service;
 
-        public SalesController(DatabaseContext context)
+        public SalesController(ServiceFactory service)
         {
-            _context = context;
+            _service = service;
         }
 
         // GET: Sales
         public async Task<IActionResult> Index()
         {
-            var databaseContext = _context.Sale.Include(s => s.Product);
-            return View(await databaseContext.ToListAsync());
+            return View(await _service
+                .CreateSaleService(HttpContext)
+                .GetSales());
         }
 
         // GET: Sales/Details/5
@@ -30,21 +30,22 @@ namespace Practice5_Web.Controllers
                 return NotFound();
             }
 
-            var sale = await _context.Sale
-                .Include(s => s.Product)
-                .FirstOrDefaultAsync(m => m.SaleID == id);
+            var sale = await _service
+                .CreateSaleService(HttpContext)
+                .GetSaleById(id);
             if (sale == null)
             {
                 return NotFound();
             }
 
+            CreateProductSelect(sale.ProductID);
             return View(sale);
         }
 
         // GET: Sales/Create
         public IActionResult Create()
         {
-            ViewData["ProductID"] = new SelectList(_context.Product, "ProductId", "Name");
+            CreateProductSelect();
             return View();
         }
 
@@ -55,29 +56,18 @@ namespace Practice5_Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(sale);
-                await _context.SaveChangesAsync();
+                await _service.CreateSaleService(HttpContext)
+                    .AddSale(sale);
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ProductID"] = new SelectList(_context.Product, "ProductId", "Name", sale.ProductID);
+            CreateProductSelect(sale.ProductID);
             return View(sale);
         }
 
         // GET: Sales/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var sale = await _context.Sale.FindAsync(id);
-            if (sale == null)
-            {
-                return NotFound();
-            }
-            ViewData["ProductID"] = new SelectList(_context.Product, "ProductId", "Name", sale.ProductID);
-            return View(sale);
+            return await Details(id);
         }
 
         // POST: Sales/Edit/5
@@ -92,45 +82,17 @@ namespace Practice5_Web.Controllers
 
             if (ModelState.IsValid)
             {
-                try
-                {
-                    _context.Update(sale);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!SaleExists(sale.SaleID))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
+                await _service.CreateSaleService(HttpContext).UpdateSale(sale);
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ProductID"] = new SelectList(_context.Product, "ProductId", "Name", sale.ProductID);
+            CreateProductSelect(sale.ProductID);
             return View(sale);
         }
 
         // GET: Sales/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var sale = await _context.Sale
-                .Include(s => s.Product)
-                .FirstOrDefaultAsync(m => m.SaleID == id);
-            if (sale == null)
-            {
-                return NotFound();
-            }
-
-            return View(sale);
+            return await Details(id);
         }
 
         // POST: Sales/Delete/5
@@ -138,19 +100,21 @@ namespace Practice5_Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var sale = await _context.Sale.FindAsync(id);
-            if (sale != null)
-            {
-                _context.Sale.Remove(sale);
-            }
-
-            await _context.SaveChangesAsync();
+            await _service.CreateSaleService(HttpContext)
+                .DeleteSale(id);
             return RedirectToAction(nameof(Index));
         }
 
-        private bool SaleExists(int id)
+        private void CreateProductSelect()
         {
-            return _context.Sale.Any(e => e.SaleID == id);
+            var products = _service.CreateProductService(HttpContext).GetProducts().Result;
+            ViewData["ProductID"] = new SelectList(products, "ProductId", "Name");
+        }
+
+        private void CreateProductSelect(int selected)
+        {
+            var products = _service.CreateProductService(HttpContext).GetProducts().Result;
+            ViewData["ProductID"] = new SelectList(products, "ProductId", "Name", selected);
         }
     }
 }
