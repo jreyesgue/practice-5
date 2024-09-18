@@ -16,6 +16,10 @@ builder.Services.AddScoped<ProductServiceEF>();
 builder.Services.AddScoped<ProductServiceADO>(provider =>
     new ProductServiceADO(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+builder.Services.AddScoped<InventoryServiceEF>();
+builder.Services.AddScoped<InventoryServiceADO>(provider =>
+    new InventoryServiceADO(builder.Configuration.GetConnectionString("DefaultConnection")));
+
 builder.Services.AddScoped<ServiceFactory>();
 builder.Services.AddSession();
 

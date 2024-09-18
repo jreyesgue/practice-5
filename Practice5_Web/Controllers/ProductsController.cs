@@ -15,7 +15,9 @@ namespace Practice5_Web.Controllers
         // GET: Products
         public async Task<IActionResult> Index()
         {
-            return View(await _service.CreateService(HttpContext).GetProducts());
+            return View(await _service
+                .CreateProductService(HttpContext)
+                .GetProducts());
         }
 
         // GET: Products/Details/5
@@ -26,7 +28,9 @@ namespace Practice5_Web.Controllers
                 return NotFound();
             }
 
-            var product = await _service.CreateService(HttpContext).GetProductById(id);
+            var product = await _service
+                .CreateProductService(HttpContext)
+                .GetProductById(id);
             if (product == null)
             {
                 return NotFound();
@@ -48,7 +52,8 @@ namespace Practice5_Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                await _service.CreateService(HttpContext).AddProduct(product);
+                await _service.CreateProductService(HttpContext)
+                    .AddProduct(product);
                 return RedirectToAction(nameof(Index));
             }
             return View(product);
@@ -72,7 +77,8 @@ namespace Practice5_Web.Controllers
 
             if (ModelState.IsValid)
             {
-                await _service.CreateService(HttpContext).UpdateProduct(product);
+                await _service.CreateProductService(HttpContext)
+                    .UpdateProduct(product);
                 return RedirectToAction(nameof(Index));
             }
             return View(product);
@@ -89,7 +95,8 @@ namespace Practice5_Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            await _service.CreateService(HttpContext).DeleteProduct(id);
+            await _service.CreateProductService(HttpContext)
+                .DeleteProduct(id);
             return RedirectToAction(nameof(Index));
         }
     }

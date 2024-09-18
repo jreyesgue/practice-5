@@ -8,7 +8,7 @@ namespace Practice5_Web
     {
         private readonly IServiceProvider _serviceProvider = serviceProvider;
 
-        public IProductService CreateService(HttpContext httpContext)
+        public IProductService CreateProductService(HttpContext httpContext)
         {
             var preference = httpContext.Session.GetString("DataAccess");
             if (preference == "ADO")
@@ -22,5 +22,21 @@ namespace Practice5_Web
                     ?? throw new InvalidOperationException("Product Service is not registered");
             }
         }
+
+        public IInventoryService CreateInventoryService(HttpContext httpContext)
+        {
+            var preference = httpContext.Session.GetString("DataAccess");
+            if (preference == "ADO")
+            {
+                return _serviceProvider.GetService<InventoryServiceADO>()
+                    ?? throw new InvalidOperationException("Inventory Service is not registered");
+            }
+            else
+            {
+                return _serviceProvider.GetService<InventoryServiceEF>()
+                    ?? throw new InvalidOperationException("Inventory Service is not registered");
+            }
+        }
     }
+
 }

@@ -8,18 +8,19 @@ namespace Practice5_Web.Controllers
 {
     public class InventoriesController : Controller
     {
-        private readonly DatabaseContext _context;
+        private readonly ServiceFactory _service;
 
-        public InventoriesController(DatabaseContext context)
+        public InventoriesController(ServiceFactory service)
         {
-            _context = context;
+            _service = service;
         }
 
         // GET: Inventories
         public async Task<IActionResult> Index()
         {
-            var databaseContext = _context.Inventory.Include(i => i.Product);
-            return View(await databaseContext.ToListAsync());
+            return View(await _service
+                .CreateInventoryService(HttpContext)
+                .GetInventory());
         }
 
         // GET: Inventories/Details/5
@@ -30,21 +31,22 @@ namespace Practice5_Web.Controllers
                 return NotFound();
             }
 
-            var inventory = await _context.Inventory
-                .Include(i => i.Product)
-                .FirstOrDefaultAsync(m => m.InventoryID == id);
+            var inventory = await _service
+                .CreateInventoryService(HttpContext)
+                .GetInventoryById(id);
             if (inventory == null)
             {
                 return NotFound();
             }
 
+            CreateProductSelect(inventory.ProductID);
             return View(inventory);
         }
 
         // GET: Inventories/Create
         public IActionResult Create()
         {
-            ViewData["ProductID"] = new SelectList(_context.Product, "ProductId", "Name");
+            CreateProductSelect();
             return View();
         }
 
@@ -55,29 +57,18 @@ namespace Practice5_Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(inventory);
-                await _context.SaveChangesAsync();
+                await _service.CreateInventoryService(HttpContext)
+                    .AddInventory(inventory);
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ProductID"] = new SelectList(_context.Product, "ProductId", "Name", inventory.ProductID);
+            CreateProductSelect(inventory.ProductID);
             return View(inventory);
         }
 
         // GET: Inventories/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var inventory = await _context.Inventory.FindAsync(id);
-            if (inventory == null)
-            {
-                return NotFound();
-            }
-            ViewData["ProductID"] = new SelectList(_context.Product, "ProductId", "Name", inventory.ProductID);
-            return View(inventory);
+            return await Details(id);
         }
 
         // POST: Inventories/Edit/5
@@ -92,45 +83,17 @@ namespace Practice5_Web.Controllers
 
             if (ModelState.IsValid)
             {
-                try
-                {
-                    _context.Update(inventory);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!InventoryExists(inventory.InventoryID))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
+                await _service.CreateInventoryService(HttpContext)
+                    .UpdateInventory(inventory);
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ProductID"] = new SelectList(_context.Product, "ProductId", "Name", inventory.ProductID);
             return View(inventory);
         }
 
         // GET: Inventories/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var inventory = await _context.Inventory
-                .Include(i => i.Product)
-                .FirstOrDefaultAsync(m => m.InventoryID == id);
-            if (inventory == null)
-            {
-                return NotFound();
-            }
-
-            return View(inventory);
+            return await Details(id);
         }
 
         // POST: Inventories/Delete/5
@@ -138,19 +101,21 @@ namespace Practice5_Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var inventory = await _context.Inventory.FindAsync(id);
-            if (inventory != null)
-            {
-                _context.Inventory.Remove(inventory);
-            }
-
-            await _context.SaveChangesAsync();
+            await _service.CreateInventoryService(HttpContext)
+                .DeleteInventory(id);
             return RedirectToAction(nameof(Index));
         }
 
-        private bool InventoryExists(int id)
+        private void CreateProductSelect()
         {
-            return _context.Inventory.Any(e => e.InventoryID == id);
+            var products = _service.CreateProductService(HttpContext).GetProducts().Result;
+            ViewData["ProductID"] = new SelectList(products, "ProductId", "Name");
+        }
+
+        private void CreateProductSelect(int selected)
+        {
+            var products = _service.CreateProductService(HttpContext).GetProducts().Result;
+            ViewData["ProductID"] = new SelectList(products, "ProductId", "Name", selected);
         }
     }
 }
