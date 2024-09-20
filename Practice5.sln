@@ -3,13 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.11.35303.130
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Practice5_Web", "Practice5_Web\Practice5_Web.csproj", "{0FE28997-3D6B-4795-91E1-1A1A8A23DEA8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Practice5_Web", "Practice5_Web\Practice5_Web.csproj", "{0FE28997-3D6B-4795-91E1-1A1A8A23DEA8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Practice5_DataAccess", "Practice5_DataAccess\Practice5_DataAccess.csproj", "{A4DB143D-126F-4DB8-92A8-BA1D832EC33B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Practice5_DataAccess", "Practice5_DataAccess\Practice5_DataAccess.csproj", "{A4DB143D-126F-4DB8-92A8-BA1D832EC33B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Practice5_Model", "Practice5_Model\Practice5_Model.csproj", "{5CA34C64-2A8F-4915-AC8B-0624E0C2F833}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Practice5_Model", "Practice5_Model\Practice5_Model.csproj", "{5CA34C64-2A8F-4915-AC8B-0624E0C2F833}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Practice5_Console", "Practice5_Console\Practice5_Console.csproj", "{EC211C1A-B190-4D59-B774-6AC7CC8E39DF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Practice5_Test", "Practice5_Test\Practice5_Test.csproj", "{733EFA9A-9E50-4D92-9919-4852E7AB3BA8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,10 +29,10 @@ Global
 		{5CA34C64-2A8F-4915-AC8B-0624E0C2F833}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5CA34C64-2A8F-4915-AC8B-0624E0C2F833}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5CA34C64-2A8F-4915-AC8B-0624E0C2F833}.Release|Any CPU.Build.0 = Release|Any CPU
-		{EC211C1A-B190-4D59-B774-6AC7CC8E39DF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{EC211C1A-B190-4D59-B774-6AC7CC8E39DF}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{EC211C1A-B190-4D59-B774-6AC7CC8E39DF}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{EC211C1A-B190-4D59-B774-6AC7CC8E39DF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{733EFA9A-9E50-4D92-9919-4852E7AB3BA8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{733EFA9A-9E50-4D92-9919-4852E7AB3BA8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{733EFA9A-9E50-4D92-9919-4852E7AB3BA8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{733EFA9A-9E50-4D92-9919-4852E7AB3BA8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
